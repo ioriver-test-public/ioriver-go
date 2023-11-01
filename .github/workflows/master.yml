@@ -63,8 +63,8 @@ jobs:
           force-bump-patch-version: false
           allow-initial-development-versions: false
 
-      - name: Archive artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: ioriver-go
-          path: dist/ioriver-go
+#      - name: Archive artifacts
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: ioriver-go
+#          path: dist/ioriver-go
