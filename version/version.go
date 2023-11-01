@@ -3,7 +3,6 @@ package version
 
 import (
     "fmt"
-    "time"
 )
 
 var (
