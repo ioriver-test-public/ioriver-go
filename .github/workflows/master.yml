@@ -29,7 +29,7 @@ jobs:
           go-version: '1.20'
           cache: true
 
-      - name: Install dependencies with GONOSUMDB and GOPROXY
+      - name: Install dependencies
         if: success()
         run: |
           go mod vendor
