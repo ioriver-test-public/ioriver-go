@@ -1,2 +1,2 @@
 # ioriver-go
-ioriver-go
+IORiver Go API library
