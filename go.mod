@@ -1,4 +1,4 @@
-module ioriver-go
+module github.com/ioriver-test-public/ioriver-go
 
 go 1.20
 
