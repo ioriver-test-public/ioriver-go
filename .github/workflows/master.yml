@@ -1,10 +1,10 @@
-name: Master merged
+name: Main merged
 
 on:
   workflow_dispatch:
   push:
     branches:
-      - master
+      - main
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
