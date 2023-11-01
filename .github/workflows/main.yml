@@ -70,14 +70,13 @@ jobs:
         run: |
           go test ./...
 
-      - name: Bump version
-        id: bump_version
-        uses: packagrio/action-bumpr-go@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Versioning
+        id: semrel
+        uses: go-semantic-release/action@v1
         with:
-          version_bump_type: 'minor'
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          force-bump-patch-version: true
+          allow-initial-development-versions: true
 
       - name: Archive artifacts
         uses: actions/upload-artifact@v3
