@@ -60,7 +60,7 @@ jobs:
 
       - name: Build and package
         run: |
-          go build ./... -ldflags="-X './version.Major=${{ steps.increment_minor_version.outputs.major }}' -X './version.Minor=${{ steps.increment_minor_version.outputs.minor }}' -X './version.Patch=${{ steps.increment_minor_version.outputs.patch }}' -X './version.CommitHash=${{ github.sha }}' -X './version.BuildTimestamp=$(date -u '+%Y-%m-%dT%H:%M:%SZ')'" -o ioriver-go
+          go build -ldflags="-X './version.Major=${{ steps.increment_minor_version.outputs.major }}' -X './version.Minor=${{ steps.increment_minor_version.outputs.minor }}' -X './version.Patch=${{ steps.increment_minor_version.outputs.patch }}' -X './version.CommitHash=${{ github.sha }}' -X './version.BuildTimestamp=$(date -u '+%Y-%m-%dT%H:%M:%SZ')'" -o ioriver-go
           mkdir -p dist
           mv ioriver-go dist/
         env:
