@@ -18,6 +18,10 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-22.04
+    env:
+      GOPROXY: "https://proxy.golang.org,direct"
+      GONOSUMDB: "github.com/ioriver-test-public/*"
+      GOPRIVATE: "github.com/ioriver-test-public"
     steps:
       - name: Source code checkout
         uses: actions/checkout@v3
