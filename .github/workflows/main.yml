@@ -1,4 +1,4 @@
-name: Main merged
+name: build+tests
 
 on:
   workflow_dispatch:
