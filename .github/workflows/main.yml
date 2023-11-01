@@ -58,28 +58,31 @@ jobs:
         run: |
           golangci-lint run --fast
 
-      - name: Build
-        if: success()
-        env:
-          GCP_ACCESS_TOKEN: ${{ steps.internal_lib_auth.outputs.access_token }}
-        run: |
-          go build ./...
-
       - name: Test
         if: ${{ success() && !inputs.RUN_ACCEPTANCE_TESTS }}
         run: |
           go test ./...
 
-      - name: Versioning
-        id: semrel
-        uses: go-semantic-release/action@v1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          force-bump-patch-version: true
-          allow-initial-development-versions: true
+      - name: Build and package
+        run: |
+          go build ./... -ldflags="-X './version.Major=${{ steps.increment_minor_version.outputs.major }}' -X './version.Minor=${{ steps.increment_minor_version.outputs.minor }}' -X './version.Patch=${{ steps.increment_minor_version.outputs.patch }}' -X './version.CommitHash=${{ github.sha }}' -X './version.BuildTimestamp=$(date -u '+%Y-%m-%dT%H:%M:%SZ')'" -o my-app
+          mkdir -p dist
+          mv ioriver-go dist/
+        env:
+          CGO_ENABLED: 0
+          GCP_ACCESS_TOKEN: ${{ steps.internal_lib_auth.outputs.access_token }}
 
-      - name: Publish release
+      - name: Increment Minor Version
+        run: |
+          go run -mod=mod version/increment_version.go
+          git add version/version.go
+          git commit -m "Increment minor version"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Archive artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: my-app
-          path: bin/
+          name: ioriver-go
+          path: dist/ioriver-go
