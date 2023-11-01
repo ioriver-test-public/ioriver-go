@@ -78,14 +78,6 @@ jobs:
           force-bump-patch-version: true
           allow-initial-development-versions: true
 
-      - name: Create release
-        id: create_release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: bin/*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Publish release
         uses: actions/upload-artifact@v3
         with:
