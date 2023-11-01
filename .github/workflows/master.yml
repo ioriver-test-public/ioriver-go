@@ -70,9 +70,3 @@ jobs:
           allow-initial-development-versions: true
           changelog-file: true
           changelog-generator-opt: "emojis=true"
-
-#      - name: Archive artifacts
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: ioriver-go
-#          path: dist/ioriver-go
