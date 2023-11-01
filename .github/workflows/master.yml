@@ -62,8 +62,6 @@ jobs:
       - name: Versioning
         id: semrel
         uses: go-semantic-release/action@v1
-        env:
-          GO_SEMANTIC_RELEASE_DEBUG: true
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           force-bump-patch-version: false
