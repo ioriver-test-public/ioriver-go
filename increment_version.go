@@ -1,5 +1,5 @@
 // increment_version.go
-package main
+package ioriver
 
 import (
     "fmt"
