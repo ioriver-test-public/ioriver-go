@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	ioriver "ioriver.io/ioriver/ioriver-go"
-	"ioriver-go/version" // Use a relative path to import the local version package
 )
 
 func main() {

@@ -58,28 +58,26 @@ jobs:
         run: |
           golangci-lint run --fast
 
-      - name: Build and package
-        run: |
-          go build -ldflags="-X './version.Major=${{ steps.increment_minor_version.outputs.major }}' -X './version.Minor=${{ steps.increment_minor_version.outputs.minor }}' -X './version.Patch=${{ steps.increment_minor_version.outputs.patch }}' -X './version.CommitHash=${{ github.sha }}' -X './version.BuildTimestamp=$(date -u '+%Y-%m-%dT%H:%M:%SZ')'" -o ioriver-go
-          mkdir -p dist
-          mv ioriver-go dist/
+      - name: Build
+        if: success()
         env:
-          CGO_ENABLED: 0
           GCP_ACCESS_TOKEN: ${{ steps.internal_lib_auth.outputs.access_token }}
+        run: |
+          go build ./...
 
       - name: Test
         if: ${{ success() && !inputs.RUN_ACCEPTANCE_TESTS }}
         run: |
-          go test
+          go test ./...
 
-      - name: Increment Minor Version
-        run: |
-          go run increment_version.go
-          git add version/version.go
-          git commit -m "Increment minor version"
-          git push
+      - name: Bump version
+        id: bump_version
+        uses: packagrio/action-bumpr-go@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          version_bump_type: 'minor'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Archive artifacts
         uses: actions/upload-artifact@v3
