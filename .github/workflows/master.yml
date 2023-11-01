@@ -48,7 +48,7 @@ jobs:
         env:
           GCP_ACCESS_TOKEN: ${{ steps.internal_lib_auth.outputs.access_token }}
         run: |
-          go build -o dist/ioriver-go ./...
+          go build ./...
 
       - name: Test
         if: ${{ success() && !inputs.RUN_ACCEPTANCE_TESTS }}
