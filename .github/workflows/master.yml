@@ -17,75 +17,77 @@ permissions:
 
 jobs:
   build:
-    - name: Source code checkout
-      uses: actions/checkout@v3
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Source code checkout
+        uses: actions/checkout@v3
 
-    - name: Setup Go
-      if: success()
-      uses: actions/setup-go@v3
-      with:
-        go-version: '1.20'
-        cache: true
+      - name: Setup Go
+        if: success()
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.20'
+          cache: true
 
-    - name: Configure Google Cloud Credentials
-      if: success()
-      id: "internal_lib_auth"
-      uses: "google-github-actions/auth@v1"
-      with:
-        token_format: "access_token" # <--
-        workload_identity_provider: projects/${{ secrets.GOOGLE_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/${{ secrets.GOOGLE_WIP_POOL_NAME }}/providers/${{ secrets.GOOGLE_WIP_PROVIDER_NAME }}
-        service_account: ${{ secrets.GOOGLE_WIP_SERVICE_ACCOUNT }}
-        access_token_lifetime: "1800s" # optional, default: '3600s' (1 hour)
-        create_credentials_file: false
+      - name: Configure Google Cloud Credentials
+        if: success()
+        id: "internal_lib_auth"
+        uses: "google-github-actions/auth@v1"
+        with:
+          token_format: "access_token" # <--
+          workload_identity_provider: projects/${{ secrets.GOOGLE_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/${{ secrets.GOOGLE_WIP_POOL_NAME }}/providers/${{ secrets.GOOGLE_WIP_PROVIDER_NAME }}
+          service_account: ${{ secrets.GOOGLE_WIP_SERVICE_ACCOUNT }}
+          access_token_lifetime: "1800s" # optional, default: '3600s' (1 hour)
+          create_credentials_file: false
 
-    - name: Install dependencies with GONOSUMDB and GOPROXY
-      if: success()
-      env:
-        GCP_ACCESS_TOKEN: ${{ steps.internal_lib_auth.outputs.access_token }}
-        GONOSUMDB: "ioriver.io/*"
-        GOPROXY: "https://oauth2accesstoken:${{steps.internal_lib_auth.outputs.access_token}}@europe-go.pkg.dev/${{secrets.GOOGLE_PROJECT_ID}}/go-repo,https://proxy.golang.org,direct"
-      run: |
-        go mod vendor
+      - name: Install dependencies with GONOSUMDB and GOPROXY
+        if: success()
+        env:
+          GCP_ACCESS_TOKEN: ${{ steps.internal_lib_auth.outputs.access_token }}
+          GONOSUMDB: "ioriver.io/*"
+          GOPROXY: "https://oauth2accesstoken:${{steps.internal_lib_auth.outputs.access_token}}@europe-go.pkg.dev/${{secrets.GOOGLE_PROJECT_ID}}/go-repo,https://proxy.golang.org,direct"
+        run: |
+          go mod vendor
 
-    - name: Install golangci-lint
-      if: success()
-      run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.52.2
+      - name: Install golangci-lint
+        if: success()
+        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.52.2
 
-    - name: Lint code
-      if: success()
-      run: |
-        golangci-lint run --fast
+      - name: Lint code
+        if: success()
+        run: |
+          golangci-lint run --fast
 
-    - name: Build
-      if: success()
-      env:
-        GCP_ACCESS_TOKEN: ${{ steps.internal_lib_auth.outputs.access_token }}
-      run: |
-        go build ./...
+      - name: Build
+        if: success()
+        env:
+          GCP_ACCESS_TOKEN: ${{ steps.internal_lib_auth.outputs.access_token }}
+        run: |
+          go build ./...
 
-    - name: Test
-      if: ${{ success() && !inputs.RUN_ACCEPTANCE_TESTS }}
-      run: |
-        go test ./...
+      - name: Test
+        if: ${{ success() && !inputs.RUN_ACCEPTANCE_TESTS }}
+        run: |
+          go test ./...
 
-    - name: Versioning
-      id: semrel
-      uses: go-semantic-release/action@v1
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        force-bump-patch-version: true
-        allow-initial-development-versions: true
+      - name: Versioning
+        id: semrel
+        uses: go-semantic-release/action@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          force-bump-patch-version: true
+          allow-initial-development-versions: true
 
-    - name: Create release
-      id: create_release
-      uses: softprops/action-gh-release@v1
-      with:
-        files: bin/*
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: bin/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Publish release
-      run: |
-        echo "Created ${{ steps.semrel.outputs.version }} Release ${{ steps.create_release.outputs.upload_url }}"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish release
+        run: |
+          echo "Created ${{ steps.semrel.outputs.version }} Release ${{ steps.create_release.outputs.upload_url }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
