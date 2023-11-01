@@ -74,7 +74,7 @@ jobs:
 
       - name: Increment Minor Version
         run: |
-          go run -mod=mod version/increment_version.go
+          go run increment_version.go
           git add version/version.go
           git commit -m "Increment minor version"
           git push

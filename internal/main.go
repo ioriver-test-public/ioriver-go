@@ -7,10 +7,6 @@ import (
 )
 
 func main() {
-    version.IncrementMinorVersion()
-    versionString := version.BuildVersion()
-    fmt.Println("Version:", versionString)
-
 	client := ioriver.NewClient("xgzcnygxb733310edbd2cdd2d043957b36316243e78b396e")
 	client.EndpointUrl = "http://127.0.0.1:8000/api/v1/"
 
