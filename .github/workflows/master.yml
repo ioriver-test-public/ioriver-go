@@ -61,7 +61,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           force-bump-patch-version: false
-          allow-initial-development-versions: false
+          allow-initial-development-versions: true
           changelog-file: true
           changelog-generator-opt: "emojis=true"
 
