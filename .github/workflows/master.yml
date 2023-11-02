@@ -40,7 +40,8 @@ jobs:
 
       - name: Install golangci-lint
         if: success()
-        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.52.2
+        run: |
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.52.2
 
       - name: Lint code
         if: success()
