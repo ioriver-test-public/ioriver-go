@@ -50,8 +50,6 @@ jobs:
 
       - name: Build
         if: success()
-        env:
-          GCP_ACCESS_TOKEN: ${{ steps.internal_lib_auth.outputs.access_token }}
         run: |
           go build ./...
 
